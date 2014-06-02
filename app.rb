@@ -2,10 +2,15 @@ require 'sinatra'
 require 'twilio-ruby'
 require 'pusher'
 require 'rack/throttle'
+require 'memcached'
 
-use Rack::Throttle::Daily,    :max => 100  # requests
-use Rack::Throttle::Hourly,   :max => 10   # requests
-use Rack::Throttle::Interval, :min => 30.0   # seconds
+#Memcached config
+CACHE = Memcached.new
+PREFIX = :throttle
+
+# User Rack Throttle to limit requests
+use Rack::Throttle::Hourly,   :cache => CACHE, :code => 200, :key_prefix => PREFIX,  :max => 10   # requests
+use Rack::Throttle::Interval, :cache => CACHE, :code => 200, :key_prefix => PREFIX,  :min => 30.0   # seconds
 
 before do
   # Setup 

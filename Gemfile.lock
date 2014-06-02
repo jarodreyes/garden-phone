@@ -4,6 +4,7 @@ GEM
     builder (3.0.0)
     jwt (0.1.5)
       multi_json (>= 1.0)
+    memcached (1.8.0)
     multi_json (1.3.6)
     pusher (0.9.4)
       multi_json (~> 1.0)
@@ -14,6 +15,8 @@ GEM
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
+    rack-throttle (0.3.0)
+      rack (>= 1.0.0)
     ruby-hmac (0.4.0)
     signature (0.1.3)
     sinatra (1.3.2)
@@ -31,7 +34,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  memcached
   pusher
   pusher-client
+  rack-throttle
   sinatra
   twilio-ruby

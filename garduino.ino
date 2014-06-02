@@ -80,7 +80,7 @@ void setup(void)
  
 }
 
-// function to print the temperature for a device
+// Individual alert sensor monitors
 void checkTemperature(DeviceAddress deviceAddress)
 {
   float temp = sensors.getTempF(deviceAddress);
@@ -107,6 +107,18 @@ void checkMoisture()
   }
   alertMsg = alertBody + moisture;
   sendStatus(alertMsg);
+}
+
+// General Sensor readings. Initiated by Pusher.
+void checkSensors() {
+  float temp = sensors.getTempF(deviceAddress);
+  moisture = analogRead(0);
+  dtostrf(temp, 6, 2, tempStr);
+  smsMoist = "moisture=" + moisture;
+  smsTemp = "temp=" + tempStr;
+  smsMsg = smsMoist + smsTemp;
+  sendStatus(smsMsg);
+
 }
 
 void loop(void)
@@ -175,6 +187,7 @@ void sendStatus(String data) {
 
 void monitorPusher() {
   if (client.connected()) {
+    client.bind("status", sendReadings);
     client.monitor();
   }
   else {

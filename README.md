@@ -1,7 +1,6 @@
-TwilioPowerOutlet
+TwilioGardenPhone
 =================
 
-Power Outlet Controlled by Twilio, Pusher, and Arduino
+![Garden-Phone](public/img/garden-phone.jpg "The Garden Phone in action")
 
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/5241e92ff0efbc61b2b1bdc960ff54cd "githalytics.com")](http://githalytics.com/jonmarkgo/TwilioGlassSMS)
+Garden Monitor that uses Twilio, Pusher, Arduino and Sinatra
