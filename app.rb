@@ -29,7 +29,7 @@ get '/arduino-data?*' do
   
   message = @client.account.messages.create(
     :from => @twilio_number,
-    :to => '2066505813',
+    :to => @my_cellphone,
     :body => body
   )
   puts message.to
