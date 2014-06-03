@@ -1,8 +1,11 @@
+#include <Timer.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <WiFi.h>
 #include <PusherClient.h>
 #include <stdlib.h>
+
+Timer timer;
 PusherClient client;
 WiFiClient wifi;
 
@@ -77,6 +80,9 @@ void setup(void)
   Serial.print("Device 0 Resolution: ");
   Serial.print(sensors.getResolution(insideThermometer), DEC); 
   Serial.println();
+
+  // Check the sensors every 10 minutes
+  timer.every(10 * 60 * 1000, checkSensors); // 10 minutes
  
 }
 
@@ -110,8 +116,8 @@ void checkMoisture()
 }
 
 // General Sensor readings. Initiated by Pusher.
-void checkSensors() {
-  float temp = sensors.getTempF(deviceAddress);
+void getReadings() {
+  float temp = sensors.getTempF(insideThermometer);
   moisture = analogRead(0);
   dtostrf(temp, 6, 2, tempStr);
   smsMoist = "moisture=" + moisture;
@@ -121,13 +127,16 @@ void checkSensors() {
 
 }
 
+// Callback function that checks sensor readings. Initiated by setup()
+void checkSensors() {
+  checkTemperature(insideThermometer); 
+  checkMoisture();
+}
+
 void loop(void)
 { 
   monitorPusher();
-  delay(2000);
-  // Check the temperature and send an alert to server if necessary
-  checkTemperature(insideThermometer); 
-  checkMoisture();
+  timer.update();
 }
 
 // function to print a device address
@@ -138,10 +147,6 @@ void printAddress(DeviceAddress deviceAddress)
     if (deviceAddress[i] < 16) Serial.print("0");
     Serial.print(deviceAddress[i], HEX);
   }
-}
-
-void checkStats(String data) {
-  Serial.print("checkingStats");
 }
 
 void setupWifiPusher() {
@@ -187,7 +192,7 @@ void sendStatus(String data) {
 
 void monitorPusher() {
   if (client.connected()) {
-    client.bind("status", sendReadings);
+    client.bind("status", getReadings);
     client.monitor();
   }
   else {
