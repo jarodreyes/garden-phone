@@ -14,9 +14,12 @@ before do
 end
 
 get '/arduino-data?*' do
+  # Params sent by Arduino
   alert = params[:alert]
   temp = params[:temp]
   moisture = params[:moisture]
+
+  # Check if this is an emergency or just a status check?
   if alert
     if moisture
       body = "Garden Alert: #{alert}. Water level: #{moisture}."
@@ -27,6 +30,7 @@ get '/arduino-data?*' do
     body = "Garden Moisture: #{moisture}. Garden Temp: #{temp}."
   end
   
+  # Send SMS 
   message = @client.account.messages.create(
     :from => @twilio_number,
     :to => @my_cellphone,
